@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { User } from './schemas/user.schema';
-import { Permission } from '../permissions/permissions.schema';
+import { User } from '../models/user.schema';
+import { Permission } from 'src/permissions/permissions.schema';
+
 
 @Injectable()
 export class UsersService {
@@ -20,7 +21,6 @@ export class UsersService {
     const user = await this.userModel
       .findById(userId)
       .select('-password') 
-      .populate('permissions', 'name action subject') 
       .exec();
   
     if (!user) {
@@ -43,17 +43,12 @@ export class UsersService {
   ): Promise<User> {
     const hashedPassword = await bcrypt.hash(password, 10);
   
-    const allPermissions = await this.permissionModel.find().exec();
-  
-    const permissionIds = allPermissions.map(permission => permission._id);
-  
     const newUser = new this.userModel({
       username,
       password: hashedPassword,
       email,
       phoneNumber,
       age,
-      permissions: permissionIds,
     });
   
     return newUser.save(); 

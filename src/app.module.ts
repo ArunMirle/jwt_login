@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './user/user.module';
+
 import { PermissionModule } from './permissions/permissions.module';
+
+import { UsersModule } from './Models/user/user.module';
+import { AuthModule } from './Models/user/auth/auth.module';
 
 @Module({
   imports: [

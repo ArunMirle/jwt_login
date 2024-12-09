@@ -1,7 +1,8 @@
 import { Controller, Post, Body, UseGuards, Get, Request } from '@nestjs/common'; // Importing Request correctly
-import { UsersService } from './user.service';
-import { CreateUserDto } from './create-user.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UsersService } from '../service/user.service';
+import { CreateUserDto } from '../dtos/create-user.dto';
+import { JwtAuthGuard } from 'src/Models/user/common/jwt-auth.guard';
+
 
 @Controller('users')
 export class UsersController {
@@ -19,7 +20,7 @@ export class UsersController {
 
     // Create the new user
     const newUser = await this.usersService.createUser(username, password, email, phoneNumber, age);
-    return { message: 'User registered successfully', userId: newUser._id };
+    return { message: 'User registered successfully', username: newUser.username };
   }
 
   @UseGuards(JwtAuthGuard)  // Protect this route with the JwtAuthGuard
