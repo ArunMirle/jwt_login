@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { User } from '../models/user.schema';
 import { Permission } from 'src/permissions/permissions.schema';
+import { Action, Subject } from '../common/enum';
 
 
 @Injectable()
@@ -42,17 +43,27 @@ export class UsersService {
     age?: number,
   ): Promise<User> {
     const hashedPassword = await bcrypt.hash(password, 10);
-  
+
+    const defaultPermissions = [
+      { action: Action.CREATE, subject: Subject.USER },
+      { action: Action.READ, subject: Subject.USER },
+    ];
+
     const newUser = new this.userModel({
       username,
       password: hashedPassword,
       email,
       phoneNumber,
       age,
+      permissions: defaultPermissions, // Add default permissions
     });
-  
-    return newUser.save(); 
+
+    return newUser.save();
   }
+
+  // Validate a user's credentials during login
+ 
+
   
 
   // Validate a user's credentials during login
