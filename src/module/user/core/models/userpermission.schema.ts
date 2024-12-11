@@ -1,13 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes } from 'mongoose';
-import { Action, Subject } from '../common/enum';
+import { Action, Subject } from '../../common/types/permission';
 ; // Adjust path as needed
 
 @Schema()
-export class UserPermission extends Document {
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'User', required: true })
-  userId: string;
-
+export class Permission extends Document {
+  
   @Prop({ required: true, enum: Action })
   action: Action;
 
@@ -15,4 +13,4 @@ export class UserPermission extends Document {
   subject: Subject;
 }
 
-export const UserPermissionSchema = SchemaFactory.createForClass(UserPermission);
+export const PermissionSchema = SchemaFactory.createForClass(Permission);

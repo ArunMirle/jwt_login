@@ -1,14 +1,16 @@
 import { Controller, Post, Body, UseGuards, Get, Request } from '@nestjs/common'; // Importing Request correctly
 import { UsersService } from '../service/user.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
-import { JwtAuthGuard } from 'src/Models/user/common/jwt-auth.guard';
+import { LoggedInUser } from '../../common/guards/loggedInUser';
+import { LoginDto } from '../dtos/login.dto';
 
 
-@Controller('users')
+
+@Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('register')
+  @Post('sign-up')
   async register(@Body() createUserDto: CreateUserDto) {
     const { username, password, email, phoneNumber, age } = createUserDto;
 
@@ -23,11 +25,11 @@ export class UsersController {
     return { message: 'User registered successfully', username: newUser.username };
   }
 
-  @UseGuards(JwtAuthGuard)  // Protect this route with the JwtAuthGuard
-  @Get('profile')
+  @UseGuards(LoggedInUser)  // Protect this route with the JwtAuthGuard
+  @Get('info')
   async getUserProfile(@Request() req: any) {
     const userId = req.user.userId;  // The userId is added to the request by JwtStrategy
-
+    console.log(req.user);
     // Call the service to get the user details by userId, excluding password
     const user = await this.usersService.findById(userId);
 
@@ -38,4 +40,15 @@ export class UsersController {
     // Return user data excluding password
     return user ;
   }
+  @Post('login')
+  async login(@Body() loginDto: LoginDto) {
+    const user = await this.usersService.validateUser(
+      loginDto.username,
+      loginDto.password,
+    );
+    if (!user) {
+      return { message: 'Invalid credentials' };
+    }
+    return this.usersService.login(user);  // Return the JWT token
+   }
 }

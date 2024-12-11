@@ -3,14 +3,18 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { User } from '../models/user.schema';
-import { Permission } from 'src/permissions/permissions.schema';
-import { Action, Subject } from '../common/enum';
+
+import { Action, Subject } from '../../common/types/permission';
+import { JwtUtility } from '../../common/utility/jwt';
+
 
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>,
-  @InjectModel(Permission.name) private permissionModel: Model<Permission>) {}
+ 
+  )
+   {}
 
   // Find a user by username
   async findOne(username: string): Promise<User | undefined> {
@@ -73,5 +77,13 @@ export class UsersService {
       return user; // Return the user if credentials match
     }
     return null;
+  }
+ 
+  // Create a JWT token for the user
+  async login(user: any) {
+    const payload = { username: user.username, userId: user._id }; 
+    return {
+      accessToken: JwtUtility.generateJwt(payload)
+    };
   }
 }
