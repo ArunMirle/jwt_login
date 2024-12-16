@@ -14,7 +14,7 @@ export class UsersController {
   async register(@Body() createUserDto: CreateUserDto) {
     const { username, password, email, phoneNumber, age } = createUserDto;
 
-    // Check if the username or email already exists
+    
     const existingUser = await this.usersService.findOne(username);
     if (existingUser) {
       return { message: 'Username or email already exists' };
@@ -25,19 +25,19 @@ export class UsersController {
     return { message: 'User registered successfully', username: newUser.username };
   }
 
-  @UseGuards(LoggedInUser)  // Protect this route with the JwtAuthGuard
+  @UseGuards(LoggedInUser)
   @Get('info')
   async getUserProfile(@Request() req: any) {
-    const userId = req.user.userId;  // The userId is added to the request by JwtStrategy
+    const userId = req.user.userId;  
     console.log(req.user);
-    // Call the service to get the user details by userId, excluding password
+  
     const user = await this.usersService.findById(userId);
 
     if (!user) {
-      return { message: 'User not found' };  // Handle case where user doesn't exist
+      return { message: 'User not found' };  
     }
 
-    // Return user data excluding password
+    
     return user ;
   }
   @Post('login')
@@ -49,6 +49,6 @@ export class UsersController {
     if (!user) {
       return { message: 'Invalid credentials' };
     }
-    return this.usersService.login(user);  // Return the JWT token
+    return this.usersService.login(user);  
    }
 }

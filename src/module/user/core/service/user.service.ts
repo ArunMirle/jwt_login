@@ -38,7 +38,7 @@ export class UsersService {
   }
   
 
-  // Create a new user (registration)
+  
   async createUser(
     username: string,
     password: string,
@@ -59,27 +59,27 @@ export class UsersService {
       email,
       phoneNumber,
       age,
-      permissions: defaultPermissions, // Add default permissions
+      permissions: defaultPermissions, 
     });
 
     return newUser.save();
   }
 
-  // Validate a user's credentials during login
+  
  
 
   
 
-  // Validate a user's credentials during login
+  
   async validateUser(username: string, password: string): Promise<User | null> {
     const user = await this.findOne(username);
     if (user && (await bcrypt.compare(password, user.password))) {
-      return user; // Return the user if credentials match
+      return user; 
     }
     return null;
   }
  
-  // Create a JWT token for the user
+ 
   async login(user: any) {
     const payload = { username: user.username, userId: user._id }; 
     return {

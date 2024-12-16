@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes } from 'mongoose';
 import { Action, Subject } from '../../common/types/permission';
-; // Adjust path as needed
+
 
 @Schema()
 export class Permission extends Document {
