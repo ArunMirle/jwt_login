@@ -1,10 +1,7 @@
-
 import { Test, TestingModule } from '@nestjs/testing';
-
 import { UsersService } from '../service/user.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { LoginDto } from '../dtos/login.dto';
-import * as bcrypt from 'bcrypt';
 import { UsersController } from './user.controller';
 
 
@@ -20,7 +17,7 @@ describe('UsersController', () => {
   let usersController: UsersController;
   let usersService: typeof mockUsersService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
       providers: [

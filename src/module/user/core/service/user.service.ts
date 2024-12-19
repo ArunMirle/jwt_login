@@ -23,21 +23,13 @@ export class UsersService {
 
   // Find a user by ID
   async findById(userId: string): Promise<any> {
-    const user = await this.userModel
-      .findById(userId)
-      .select('-password') 
-      .exec();
-  
+    const user = await this.userModel.findById(userId).exec();
     if (!user) {
-      return null; 
+      return null;
     }
   
-    return {
-      user, 
-    };
+    return user.toObject(); // Use Mongoose's `toObject` to get the plain user data
   }
-  
-
   
   async createUser(
     username: string,
@@ -47,22 +39,22 @@ export class UsersService {
     age?: number,
   ): Promise<User> {
     const hashedPassword = await bcrypt.hash(password, 10);
-
+  
     const defaultPermissions = [
       { action: Action.CREATE, subject: Subject.USER },
       { action: Action.READ, subject: Subject.USER },
     ];
-
-    const newUser = new this.userModel({
+  
+    const newUser = await this.userModel.create({
       username,
       password: hashedPassword,
       email,
       phoneNumber,
       age,
-      permissions: defaultPermissions, 
+      permissions: defaultPermissions,
     });
-
-    return newUser.save();
+  
+    return newUser;
   }
 
   

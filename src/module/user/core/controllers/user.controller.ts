@@ -1,8 +1,9 @@
-import { Controller, Post, Body, UseGuards, Get, Request } from '@nestjs/common'; // Importing Request correctly
+import { Controller, Post, Body, UseGuards, Get, Request, UseInterceptors } from '@nestjs/common'; // Importing Request correctly
 import { UsersService } from '../service/user.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { LoggedInUser } from '../../common/guards/loggedInUser';
 import { LoginDto } from '../dtos/login.dto';
+import { SanitizeUserInterceptor } from '../../common/interceptors/hidePass.interceptor';
 
 
 
@@ -25,21 +26,20 @@ export class UsersController {
     return { message: 'User registered successfully', username: newUser.username };
   }
 
-  @UseGuards(LoggedInUser)
+  
+  @UseInterceptors(SanitizeUserInterceptor) 
   @Get('info')
   async getUserProfile(@Request() req: any) {
-    const userId = req.user.userId;  
-    console.log(req.user);
-  
+    const userId = req.user.userId;
     const user = await this.usersService.findById(userId);
-
     if (!user) {
-      return { message: 'User not found' };  
+      return { message: 'User not found' };
     }
 
-    
-    return user ;
+    return user;
   }
+
+
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     const user = await this.usersService.validateUser(

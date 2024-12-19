@@ -1,16 +1,21 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './module/user/core/user.module';
 import { PermissionModule } from './module/user/permissions/permissions.module';
-import { ConfigModule } from '@nestjs/config';
-
 
 @Module({
-  imports: [ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb://localhost:27017/nestjs-auth'), 
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }), // Load .env globally
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URI'),
+      }),
+      inject: [ConfigService],
+    }),
     UsersModule,
-  
-    PermissionModule
+    PermissionModule,
   ],
 })
 export class AppModule {}
