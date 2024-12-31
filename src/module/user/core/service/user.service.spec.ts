@@ -74,29 +74,30 @@ describe('UsersService', () => {
 
   describe('findById', () => {
     it('should return a user without the password', async () => {
-      const userWithoutPassword = { ...mockUser };
-      delete userWithoutPassword.password;
-
+      const userDocumentMock = {
+        ...mockUser,
+        toObject: jest.fn().mockReturnValue({ ...mockUser }),
+      };
+  
       userModel.findById.mockReturnValue({
-        select: jest.fn().mockReturnThis(),
-        exec: jest.fn().mockResolvedValue(userWithoutPassword),
+        exec: jest.fn().mockResolvedValue(userDocumentMock),
       });
-
+  
       const result = await service.findById('123');
-      expect(result).toEqual({ user: userWithoutPassword });
+      expect(result).toEqual(mockUser);
       expect(userModel.findById).toHaveBeenCalledWith('123');
     });
-
+  
     it('should return null if user not found', async () => {
       userModel.findById.mockReturnValue({
-        select: jest.fn().mockReturnThis(),
         exec: jest.fn().mockResolvedValue(null),
       });
-
+  
       const result = await service.findById('nonexistentId');
       expect(result).toBeNull();
     });
   });
+  
 
   describe('createUser', () => {
     it('should create and return a new user', async () => {
@@ -121,7 +122,7 @@ describe('UsersService', () => {
         newUserInput.password,
         newUserInput.email,
         newUserInput.phoneNumber,
-        newUserInput.age,
+        
       );
   
       expect(bcrypt.hash).toHaveBeenCalledWith(password, 10);

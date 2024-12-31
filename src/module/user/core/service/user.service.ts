@@ -28,29 +28,42 @@ export class UsersService {
       return null;
     }
   
-    return user.toObject(); // Use Mongoose's `toObject` to get the plain user data
+    return user.toObject(); 
+    
   }
   
   async createUser(
     username: string,
     password: string,
     email: string,
+    userType: string,
     phoneNumber?: string,
     age?: number,
+    designation?: string,
   ): Promise<User> {
     const hashedPassword = await bcrypt.hash(password, 10);
   
-    const defaultPermissions = [
-      { action: Action.CREATE, subject: Subject.USER },
-      { action: Action.READ, subject: Subject.USER },
-    ];
+    const defaultPermissions =
+      userType === 'Admin'
+        ? [
+            { action: Action.CREATE, subject: Subject.USER },
+            { action: Action.READ, subject: Subject.USER },
+            { action: Action.UPDATE, subject: Subject.USER },
+            { action: Action.DELETE, subject: Subject.USER },
+          ]
+        : [
+            { action: Action.READ, subject: Subject.USER },
+            { action: Action.CREATE, subject: Subject.USER },
+          ];
   
     const newUser = await this.userModel.create({
       username,
       password: hashedPassword,
       email,
+      userType,
       phoneNumber,
       age,
+      designation,
       permissions: defaultPermissions,
     });
   

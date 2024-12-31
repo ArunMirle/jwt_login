@@ -1,13 +1,13 @@
-import { IsEmail, IsOptional, IsString, Min, Max, IsNotEmpty } from 'class-validator';
+import { IsString, IsEmail, IsOptional, IsEnum } from 'class-validator';
+import { UserType } from '../../common/types/permission';
 
 export class CreateUserDto {
-  @IsNotEmpty()
+  @IsString()
   username: string;
 
-  @IsNotEmpty()
+  @IsString()
   password: string;
 
-  @IsNotEmpty()
   @IsEmail()
   email: string;
 
@@ -16,7 +16,12 @@ export class CreateUserDto {
   phoneNumber?: string;
 
   @IsOptional()
-  @Min(1)
-  @Max(120)
   age?: number;
+
+  @IsEnum(UserType, { message: 'userType must be Admin or Channel Partner' })
+userType: UserType;
+
+  @IsOptional()
+  @IsString()
+  designation?: string;
 }

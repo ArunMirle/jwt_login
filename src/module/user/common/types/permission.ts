@@ -10,4 +10,7 @@ export enum Action {
     COMMENT = 'COMMENT',
     USER = 'USER',
   }
-  
+  export enum UserType {
+    ADMIN = 'Admin',
+    CHANNEL_PARTNER = 'Channel Partner',
+  }

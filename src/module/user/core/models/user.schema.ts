@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose'; // Adjust the import path accordingly
-import { SchemaTypes } from 'mongoose';  // Correct import
+import { Document } from 'mongoose';
 import { Permission } from './userpermission.schema';
+import { UserType } from '../../common/types/permission';
 
 @Schema()
 export class User extends Document {
@@ -18,10 +18,17 @@ export class User extends Document {
   phoneNumber?: string;
 
   @Prop({ required: false })
-  age?: number;
-  
+  age?: string;
+
+  @Prop({ required: true, enum: Object.values(UserType) })
+  userType: string;
+
+  @Prop({ required: false })
+  designation?: string;
+
   @Prop({ type: [Permission], default: [] })
   permissions: Permission[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
